@@ -1,0 +1,42 @@
+﻿<Window x:Class="BlankApp1.Views.RegisterForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlankApp1.Views"
+         xmlns:winCloser="clr-namespace:BlankApp1.Helpers"
+        mc:Ignorable="d"
+        Title="RegisterForm" Height="450" Width="300" winCloser:WindowCloser.EnableWindowClosing="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <TextBox HorizontalAlignment="Center" Margin="0,108,0,0" TextWrapping="Wrap" Text="{Binding Path=User.Name}" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
+        <TextBox HorizontalAlignment="Center" Margin="0,167,0,0" TextWrapping="Wrap" Text="{Binding Path=User.Balance}" VerticalAlignment="Top" Width="120" Grid.Row="1"/>
+        <Button Content="Добавить" HorizontalAlignment="Center" Margin="0,221,0,0" VerticalAlignment="Top" Width="120" Command="{Binding Path=AcceptCommand}" Height="27" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Designed by TanG" VerticalAlignment="Bottom" Grid.Row="1"/>
+        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" ItemsSource="{Binding Users}"
+                  SelectedItem="{Binding RegistredUser}">
+            <ItemsControl.ItemTemplate>
+
+
+
+
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Margin="3,3,3,0" Text="{Binding Name}"/>
+                            <TextBlock Margin="3,3,3,0" Text="{Binding Balance}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+
+
+
+        </ComboBox>
+        <Button Content="Button" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding AcceptForRegistredUser}"/>
+    </Grid>
+</Window>

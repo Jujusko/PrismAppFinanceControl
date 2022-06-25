@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="BlankApp1.Views.Common.AddCategoryUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BlankApp1.Views.Common"
+             mc:Ignorable="d" 
+            d:DesignHeight="250" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Width="120"
+                 Text="{Binding NewCategory.Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Content="Add tranzaction" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center"
+                Click="Button_Click" Command="{Binding Accept}"/>
+    </Grid>
+</UserControl>
