@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace BlankApp1.ViewModels
 {
@@ -27,6 +29,12 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _users, value);
         }
 
+        private UserUI _registredUser;
+        public UserUI RegistredUser
+        {
+            get => _registredUser;
+            set => SetProperty(ref _user, value);
+        }
         private UserUI _user;
         public UserUI User
         {
@@ -35,12 +43,6 @@ namespace BlankApp1.ViewModels
         }
 
 
-        private UserUI _registredUser;
-        public UserUI RegistredUser
-        {
-            get => _registredUser;
-            set => SetProperty(ref _user, value);
-        }
 
 
         public RegisterFormViewModel()
@@ -70,7 +72,12 @@ namespace BlankApp1.ViewModels
                           dBContext.Users.Add(toDb);
                           dBContext.SaveChanges();
                       }
-                      var tmp = dBContext.Users.FirstOrDefault(a => a.Name == _user.Name);
+
+                      var tmp = dBContext.Users
+                      .Include(x => x.Categories)
+                      .Include(x => x.Tranzactions)
+                      .FirstOrDefault(a => a.Name == _user.Name);
+
                       UserSaver.GetUser(tmp);
                       ExecuteShowWindow();
                       Close?.Invoke();
@@ -96,11 +103,12 @@ namespace BlankApp1.ViewModels
                           dBContext.Users.Add(toDb);
                           dBContext.SaveChanges();
                       }
-                      var tmp = dBContext.Users.FirstOrDefault(a => a.Name == _user.Name);
+                      var tmp = dBContext.Users.Include(x => x.Categories).Include(x => x.Tranzactions).Single(a => a.Name == _user.Name);
                       UserSaver.GetUser(tmp);
                       ExecuteShowWindow();
                       Close?.Invoke();
-                  }));
+                  },
+                  obj => RegistredUser != null));
             }
         }
 

@@ -1,7 +1,6 @@
 ﻿using BlankApp1.Helpers;
 using BlankApp1.ViewModels;
 using BlankApp1.Views.Common;
-using BlankApp1.Views.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +25,6 @@ namespace BlankApp1.Views
         public RegisterForm()
         {
             InitializeComponent();
-            DialogService.RegisterDialog<MainWindowUC, MainWindowViewModel>();
             DialogService.RegisterDialog<AddTranzactionUC, AddTranzactionViewModel>();
             DialogService.RegisterDialog<AddCategoryUserControl, AddCategoryViewModel>();
         }

@@ -16,13 +16,23 @@
             <RowDefinition Height="5*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" ItemsSource="{Binding }"/>
+        <ComboBox HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" 
+                  ItemsSource="{Binding Path=Categories}" SelectedItem="{Binding Path=SelectedCategory}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock Margin="3, 3, 3, 0" Text="{Binding Name}"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ComboBox>
         <TextBox HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" TextWrapping="Wrap" Width="120"
                  Text="{Binding TranzToAdd.Name, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Width="120"
                  Text="{Binding TranzToAdd.Cost, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Content="Add tranzaction" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center"
                 Click="Button_Click" Command="{Binding Accept}"/>
+        <DatePicker HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Bottom" SelectedDate="{Binding Path=TranzDate}"/>
 
     </Grid>
 </UserControl>

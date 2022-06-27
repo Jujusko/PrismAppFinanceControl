@@ -37,14 +37,19 @@ namespace BlankApp1.Model
             set => SetProperty(ref _name, value);
         }
 
-        //public TranzactionUI()
-        //{
-
-        //}
+        private string _date;
+        public string Date
+        {
+            get => _date;
+            set => SetProperty(ref _date, value);
+        }
         public TranzactionUI(double cost, string name)
         {
             Cost = cost;
             Name = name;
+        }
+        public TranzactionUI()
+        {
         }
     }
 }

@@ -31,6 +31,7 @@ namespace BlankApp1.ViewModels
             var dbCat = CustomMapper.GetInstance().Map<Category>(NewCategory);
             dbCat.UserId = _user.Id;
             _db.Categories.Add(dbCat);
+            UserSaver.currentUser.Categories.Add(dbCat);
             _db.SaveChanges();
         }
 

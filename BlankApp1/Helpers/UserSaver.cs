@@ -14,9 +14,10 @@ namespace BlankApp1.Helpers
         public static User GetUser(User user = null)
         {
             if (user is not null)
+            {
                 currentUser = user;
+            }
             return currentUser;
         }
-
     }
 }

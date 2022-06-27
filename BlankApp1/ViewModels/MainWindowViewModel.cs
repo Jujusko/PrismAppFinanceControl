@@ -62,7 +62,7 @@ namespace BlankApp1.ViewModels
         {
             _user = CustomMapper.GetInstance().Map<UserUI>(UserSaver.GetUser(null));
             _tranzactions = new();
-            _selectedTranz = new(0, "qwe");
+            _selectedTranz = new();
             _categories = new();
 
             User userId = dBContext.Users.FirstOrDefault(x => x.Name == _user.Name);
@@ -126,7 +126,7 @@ namespace BlankApp1.ViewModels
                           dBContext.SaveChanges();
                           Tranzactions.Remove(_selectedTranz);
                       },
-                      (obj) => _selectedTranz != null));
+                      (obj) => _selectedTranz != null && _selectedTranz.Id != 0));
             }
         }
 
@@ -149,6 +149,7 @@ namespace BlankApp1.ViewModels
             {
                 _categories.Add(CustomMapper.GetInstance().Map<CategoryUI>(cat));
             }
+            UserSaver.GetUser(dbUser);
             User = CustomMapper.GetInstance().Map<UserUI>(UserSaver.GetUser());
         }
 

@@ -25,6 +25,12 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _categories, value);
         }
 
+        private CategoryUI _selectedCategory;
+        public CategoryUI SelectedCategory
+        {
+            get => _selectedCategory;
+            set => SetProperty(ref _selectedCategory, value);
+        }
         private TranzactionUI _tranzToAdd;
         public TranzactionUI TranzToAdd
         {
@@ -32,12 +38,23 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _tranzToAdd, value);
         }
 
+
+        private DateTime _tranzDate;
+        public DateTime TranzDate
+        {
+            get => _tranzDate;
+            set => SetProperty(ref _tranzDate, value);
+        }
+
         private DelegateCommand _accept;
         public DelegateCommand Accept =>
             _accept ?? (_accept = new DelegateCommand(AddTranzaction));
         private void AddTranzaction()
         {
+
+            _tranzToAdd.Date = TranzDate.ToShortDateString();
             Tranzaction tranzToAdd = CustomMapper.GetInstance().Map<Tranzaction>(_tranzToAdd);
+            tranzToAdd.CategoryId = SelectedCategory.Id;
             tranzToAdd.UserId = _user.Id;
             _db.Tranzactions.Add(tranzToAdd);
             var dbUser = _db.Users.Single(x => x.Id == tranzToAdd.UserId);
@@ -47,9 +64,14 @@ namespace BlankApp1.ViewModels
         }
         public AddTranzactionViewModel()
         {
+            TranzDate = DateTime.Today;
             _tranzToAdd = new(100,"Что купили?");
             _user = UserSaver.GetUser();
-            //var categoriesFromDb
+            Categories = new();
+            foreach(var cat in _user.Categories)
+            {
+                Categories.Add(CustomMapper.GetInstance().Map<CategoryUI>(cat));
+            }
         }
     }
 }

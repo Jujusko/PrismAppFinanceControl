@@ -4,7 +4,7 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:vm ="clr-namespace:BlankApp1.ViewModels"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525" >
+        Title="{Binding Title}" Height="350" Width="525">
     <!--<Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>-->
@@ -25,6 +25,7 @@
                     <StackPanel Margin="5">
                         <TextBlock FontSize="18" Text="{Binding Path=Name}" />
                         <TextBlock Text="{Binding Path=Cost}" />
+                        <TextBlock Text="{Binding Path=Date}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
