@@ -29,6 +29,17 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _categories, value);
         }
 
+        private CategoryUI _selectedCategory;
+        public CategoryUI SelectedCategory
+        {
+            get => _selectedCategory;
+            set
+            {
+                SetProperty(ref _selectedCategory, value);
+                RefreshTranzactionsByCategory();
+            }
+        }
+
 
 
         private ObservableCollection<TranzactionUI> _tranzactions;
@@ -43,12 +54,12 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _user, value);
         }
 
-        private TranzactionUI _newTranz;
-        public TranzactionUI NewTranz
-        {
-            get => _newTranz;
-            set => SetProperty(ref _newTranz, value);
-        }
+        //private TranzactionUI _newTranz;
+        //public TranzactionUI NewTranz
+        //{
+        //    get => _newTranz;
+        //    set => SetProperty(ref _newTranz, value);
+        //}
 
         private TranzactionUI _selectedTranz;
         public TranzactionUI SelectedTranz
@@ -161,6 +172,31 @@ namespace BlankApp1.ViewModels
         private void AddCategoryWindow()
         {
             openTranzDS.ShowDialog<AddCategoryViewModel>(result => { });
+        }
+
+
+
+        private void RefreshTranzactionsByCategory()
+        {
+            var tranzByCategory = dBContext.Tranzactions.Where(x => x.CategoryId == SelectedCategory.Id).ToArray();
+            Tranzactions.Clear();
+            foreach(var tranz in tranzByCategory)
+            {
+                Tranzactions.Add(CustomMapper.GetInstance().Map<TranzactionUI>(tranz));
+            }
+        }
+
+        private DelegateCommand _deleteCategory;
+        public DelegateCommand DeleteCategory
+            => _deleteCategory ?? (_deleteCategory = new DelegateCommand(DeleteCateg));
+
+        private void DeleteCateg()
+        {
+            Categories.Remove(SelectedCategory);
+
+            var catDb = dBContext.Categories.Single(x => x.Id == SelectedCategory.Id);
+            dBContext.Categories.Remove(catDb);
+            dBContext.SaveChanges();
         }
     }
 }

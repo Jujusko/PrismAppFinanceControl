@@ -60,7 +60,8 @@ namespace BlankApp1.ViewModels
             var dbUser = _db.Users.Single(x => x.Id == tranzToAdd.UserId);
             dbUser.Balance -= tranzToAdd.Cost;
             _db.SaveChanges();
-            UserSaver.GetUser(dbUser);
+            UserSaver.currentUser.Balance -= tranzToAdd.Cost;
+            //UserSaver.GetUser(dbUser);
         }
         public AddTranzactionViewModel()
         {

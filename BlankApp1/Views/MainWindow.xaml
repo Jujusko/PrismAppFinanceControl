@@ -5,9 +5,9 @@
         xmlns:vm ="clr-namespace:BlankApp1.ViewModels"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="350" Width="525">
-    <!--<Window.DataContext>
+    <Window.DataContext>
         <vm:MainWindowViewModel/>
-    </Window.DataContext>-->
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
@@ -36,13 +36,13 @@
         <TextBlock HorizontalAlignment="Left" Margin="31,26,0,0" TextWrapping="Wrap" Text="{Binding User.Balance}" VerticalAlignment="Top" Grid.Column="1"/>
         <Button Grid.Column="2" Content="Добавить транзакцию"  Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Command="{Binding Path=AddTranzactionCommand}" Grid.RowSpan="2"  />
         <Button Grid.Column="2" Content="Button" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Command="{Binding Path=RemoveTranzactionCommand }" CommandParameter="{Binding SelectedTranz}"/>
-        <ComboBox Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" ItemsSource="{Binding Categories}">
+        <ComboBox Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}">
 
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <TextBlock Margin="3, 3, 3, 0" Text="{Binding Name}"></TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Margin="3, 3, 3, 0" Text="{Binding Name}"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
