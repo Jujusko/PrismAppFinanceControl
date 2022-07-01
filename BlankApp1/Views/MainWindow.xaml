@@ -36,13 +36,28 @@
         <TextBlock HorizontalAlignment="Left" Margin="31,26,0,0" TextWrapping="Wrap" Text="{Binding User.Balance}" VerticalAlignment="Top" Grid.Column="1"/>
         <Button Grid.Column="2" Content="Добавить транзакцию"  Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Command="{Binding Path=AddTranzactionCommand}" Grid.RowSpan="2"  />
         <Button Grid.Column="2" Content="Button" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Command="{Binding Path=RemoveTranzactionCommand }" CommandParameter="{Binding SelectedTranz}"/>
-        <ComboBox Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}">
+        <ComboBox Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120"
+                  ItemsSource="{Binding Path=Categories}" SelectedItem="{Binding SelectedCategory}">
 
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Margin="3, 3, 3, 0" Text="{Binding Name}"></TextBlock>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3, 3, 3, 0" Text="{Binding Name}"></TextBlock>
+                        <Button Grid.Row="1" Grid.Column="0" Content="Удалить" 
+                                Command="{Binding DataContext.DeleteCategory, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window} }"
+                                CommandParameter="{Binding Path=Id}"></Button>
+                        <Button Content="Изменить" Grid.Column="1" Grid.Row="1"
+                                Command="{Binding DataContext.EditCategory, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" 
+                                CommandParameter="{Binding Path=Id}"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -141,6 +141,11 @@ namespace BlankApp1.ViewModels
             }
         }
 
+        private DelegateCommand _editCategory;
+        public DelegateCommand EditCategory
+            => _editCategory ?? (_editCategory = new DelegateCommand(EditCategoryWindow));
+
+
         private DelegateCommand _refresh;
         public DelegateCommand Refresh =>
             _refresh ?? (_refresh = new DelegateCommand(RefreshData));
@@ -163,6 +168,10 @@ namespace BlankApp1.ViewModels
             UserSaver.GetUser(dbUser);
             User = CustomMapper.GetInstance().Map<UserUI>(UserSaver.GetUser());
         }
+        private void EditCategoryWindow()
+        {
+            openTranzDS.ShowDialog<EditCategoryViewModel>(result =>{ });
+        }
 
         private void ExecuteShowWindow()
         {
@@ -178,25 +187,55 @@ namespace BlankApp1.ViewModels
 
         private void RefreshTranzactionsByCategory()
         {
-            var tranzByCategory = dBContext.Tranzactions.Where(x => x.CategoryId == SelectedCategory.Id).ToArray();
-            Tranzactions.Clear();
-            foreach(var tranz in tranzByCategory)
+            if (SelectedCategory is not null)
             {
-                Tranzactions.Add(CustomMapper.GetInstance().Map<TranzactionUI>(tranz));
+                var tranzByCategory = dBContext.Tranzactions.Where(x => x.CategoryId == SelectedCategory.Id).ToArray();
+                Tranzactions.Clear();
+                foreach(var tranz in tranzByCategory)
+                    Tranzactions.Add(CustomMapper.GetInstance().Map<TranzactionUI>(tranz));
             }
         }
 
-        private DelegateCommand _deleteCategory;
-        public DelegateCommand DeleteCategory
-            => _deleteCategory ?? (_deleteCategory = new DelegateCommand(DeleteCateg));
-
-        private void DeleteCateg()
+        private RelayCommand _deleteCategory;
+        public RelayCommand DeleteCategory
         {
-            Categories.Remove(SelectedCategory);
+            get
+            {
+                return _deleteCategory ??
+                     (_deleteCategory = new RelayCommand(obj =>
+                     {
 
-            var catDb = dBContext.Categories.Single(x => x.Id == SelectedCategory.Id);
-            dBContext.Categories.Remove(catDb);
+                         int a = Convert.ToInt32(obj);
+                         DeleteCateg(a);
+                     }));
+            }
+        }
+
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            set => SetProperty(ref _id, value);
+        }
+        private void DeleteCateg(int id)
+        {
+            var a = Categories.Single(x => x.Id == id);
+            var tranzactionsFromDeletedCategory = dBContext.Tranzactions.Where(x => x.CategoryId == a.Id).ToArray();
+            var defaultCategory = dBContext.Categories.SingleOrDefault(x => x.Name == "Default" && x.UserId == _user.Id);
+            if (defaultCategory is null)
+            {
+                defaultCategory = new Category();
+                defaultCategory.UserId = _user.Id;
+                defaultCategory.Name = "Default";
+                dBContext.Categories.Add(defaultCategory);
+            }
+            foreach (var tranz in tranzactionsFromDeletedCategory)
+                tranz.CategoryId = defaultCategory.Id;
+
+            dBContext.Remove(dBContext.Categories.Single(x => x.Id == id));
             dBContext.SaveChanges();
+
+            Categories.Remove(a);
         }
     }
 }
