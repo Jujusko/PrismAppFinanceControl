@@ -10,26 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BlankApp1.Views.Common
+namespace BlankApp1.Views
 {
     /// <summary>
-    /// Interaction logic for EditCategoryUserControl.xaml
+    /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class EditCategoryUserControl : UserControl
+    public partial class Window1 : Window
     {
-        public EditCategoryUserControl()
+        public Window1()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var wind = this.Parent as Window;
-
-            wind.DialogResult = true;
         }
     }
 }

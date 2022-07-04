@@ -92,6 +92,16 @@ namespace BlankApp1.ViewModels
                 var uiCat = CustomMapper.GetInstance().Map<CategoryUI>(tr);
                 _categories.Add(uiCat);
             }
+
+
+
+
+
+
+
+
+            NewTabCommand = new DelegateCommand(GetThisTab);
+            Tabs = new ObservableCollection<ITab>();
         }
 
         private RelayCommand _addTranzactionCommand;
@@ -141,9 +151,14 @@ namespace BlankApp1.ViewModels
             }
         }
 
-        private DelegateCommand _editCategory;
-        public DelegateCommand EditCategory
-            => _editCategory ?? (_editCategory = new DelegateCommand(EditCategoryWindow));
+        private RelayCommand _editCategory;
+        public RelayCommand EditCategory
+            => _editCategory ?? (_editCategory = new RelayCommand(
+                obj =>
+            {
+                StaticData.SetCategory(dBContext.Categories.Single(x => x.Id == Convert.ToInt32(obj)));
+                EditCategoryWindow();
+            }));
 
 
         private DelegateCommand _refresh;
@@ -237,5 +252,22 @@ namespace BlankApp1.ViewModels
 
             Categories.Remove(a);
         }
+
+
+
+
+
+
+
+        public DelegateCommand NewTabCommand { get; }
+        public ICollection<ITab> Tabs { get; }
+        private void GetThisTab()
+        {
+
+        }
+
+
+
+
     }
 }

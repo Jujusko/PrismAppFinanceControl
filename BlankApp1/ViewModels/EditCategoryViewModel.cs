@@ -30,8 +30,9 @@ namespace BlankApp1.ViewModels
             _accept ?? (_accept = new DelegateCommand(AcceptCommand));
         private void AcceptCommand()
         {
-            Category category = StaticCategory.GetGategory();
-
+            Category category = StaticData.GetGategory();
+            category.Name = NewName;
+            _dBContext.SaveChanges();
         }
     }
 }

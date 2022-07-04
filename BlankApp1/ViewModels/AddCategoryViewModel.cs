@@ -41,5 +41,6 @@ namespace BlankApp1.ViewModels
             NewCategory = new();
         }
 
+
     }
 }
