@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace BlankApp1.DataBaseLay.Entitys
 {
-    public class User
+    public class RegularTranzaction
     {
-
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public double Balance { get; set; }
-        public virtual ICollection<Tranzaction> Tranzactions { get; set; }
-        public virtual ICollection<Category> Categories { get; set; }
-        public virtual ICollection<RegularTranzaction> RegularTranzactions { get; set; }
-
+        public int Day { get; set; }
+        public int Cost { get; set; }
+        public int UserId { get; set; }
+        public virtual User User { get; set; }
     }
 }

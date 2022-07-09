@@ -28,6 +28,7 @@ namespace BlankApp1.Views
             DialogService.RegisterDialog<AddTranzactionUC, AddTranzactionViewModel>();
             DialogService.RegisterDialog<AddCategoryUserControl, AddCategoryViewModel>();
             DialogService.RegisterDialog<EditCategoryUserControl, EditCategoryViewModel>();
+            DialogService.RegisterDialog<AddSubscriptionUserControl, AddSubscriptionViewModel>();
         }
     }
 }

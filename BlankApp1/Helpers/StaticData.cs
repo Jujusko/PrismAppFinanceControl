@@ -1,4 +1,5 @@
 ﻿using BlankApp1.DataBaseLay.Entitys;
+using BlankApp1.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace BlankApp1.Helpers
     public class StaticData
     {
         private static Category _savedCategory = new();
-        private static Tranzaction _savedTranzaction = new();
-
+        private static Tranzaction _savedTranzaction;
+        
         public static Category GetGategory()
         {
             return _savedCategory;
@@ -20,9 +21,11 @@ namespace BlankApp1.Helpers
         public static void SetCategory(Category category)
             => _savedCategory = category;
 
-        public static Tranzaction GetTranzaction()
+        public static TranzactionUI GetTranzaction()
         {
-            return _savedTranzaction;
+            TranzactionUI savedTranz = CustomMapper.GetInstance().Map<TranzactionUI>(_savedTranzaction);
+            _savedTranzaction = null;
+            return savedTranz;
         }
 
         public static void SetTranzaction(Tranzaction tranzaction)

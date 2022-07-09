@@ -7,9 +7,9 @@
              xmlns:vm="clr-namespace:BlankApp1.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="250" d:DesignWidth="300" >
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <vm:AddTranzactionViewModel></vm:AddTranzactionViewModel>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
@@ -31,7 +31,9 @@
         <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Width="120"
                  Text="{Binding TranzToAdd.Cost, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Content="Add tranzaction" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center"
-                Click="Button_Click" Command="{Binding Accept}"/>
+                Click="Button_Click" Command="{Binding Accept}" Visibility="{Binding ShowAdd}"/>
+        <Button Content="Edit tranzaction" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center"
+                Click="Button_Click" Command="{Binding Edit}" Visibility="{Binding EditTranzVisible}"/>
         <DatePicker HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Bottom" SelectedDate="{Binding Path=TranzDate}"/>
 
     </Grid>

@@ -13,7 +13,7 @@ namespace BlankApp1.ViewModels
 {
     public class AddCategoryViewModel : MyNotifyPropChanged
     {
-        private AppDBContext _db = new();
+        private AppDBContext _db;
         private User _user;
 
         private CategoryUI _newCategory;
@@ -37,6 +37,7 @@ namespace BlankApp1.ViewModels
 
         public AddCategoryViewModel()
         {
+            _db = UserSaver.GetDB();
             _user = UserSaver.GetUser();
             NewCategory = new();
         }

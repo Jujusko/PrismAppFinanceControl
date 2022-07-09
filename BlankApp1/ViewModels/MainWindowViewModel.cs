@@ -17,10 +17,23 @@ namespace BlankApp1.ViewModels
     {
         IDIalogService openTranzDS = new DialogService();
 
-        private AppDBContext dBContext = new();
+        private AppDBContext dBContext;
 
         private UserUI _user;
 
+        private ObservableCollection<RegularTranzactionUI> _regularTranzactions;
+        public ObservableCollection<RegularTranzactionUI> RegularTranzactions
+        {
+            get => _regularTranzactions;
+            set => SetProperty(ref _regularTranzactions, value);
+        }
+
+        private RegularTranzactionUI _selectedSubscription;
+        public RegularTranzactionUI SelectedSubscription
+        {
+            get => _selectedSubscription;
+            set => SetProperty(ref _selectedSubscription, value);
+        }
 
         private ObservableCollection<CategoryUI> _categories;
         public ObservableCollection<CategoryUI> Categories
@@ -71,10 +84,12 @@ namespace BlankApp1.ViewModels
 
         public MainWindowViewModel()
         {
+            dBContext = UserSaver.GetDB();
             _user = CustomMapper.GetInstance().Map<UserUI>(UserSaver.GetUser(null));
             _tranzactions = new();
             _selectedTranz = new();
             _categories = new();
+            RegularTranzactions = new();
 
             User userId = dBContext.Users.FirstOrDefault(x => x.Name == _user.Name);
             _user.Id = userId.Id;
@@ -87,21 +102,24 @@ namespace BlankApp1.ViewModels
                 _tranzactions.Add(uiTranz);
             }
             var dbCategories = dBContext.Categories.Where(x => x.UserId == userId.Id).ToArray();
+
+
             foreach (var tr in dbCategories)
             {
-                var uiCat = CustomMapper.GetInstance().Map<CategoryUI>(tr);
-                _categories.Add(uiCat);
+                if (tr.Name != "RegularTranzactions" && tr.Name != "Default")
+                {
+                    var uiCat = CustomMapper.GetInstance().Map<CategoryUI>(tr);
+                    _categories.Add(uiCat);
+
+                }
+
             }
 
-
-
-
-
-
-
-
-            NewTabCommand = new DelegateCommand(GetThisTab);
-            Tabs = new ObservableCollection<ITab>();
+            var regularTranzes = CustomMapper.GetInstance()
+                .Map<List<RegularTranzactionUI>>
+                (dBContext.RegularTranzactions.Where(x => x.UserId == userId.Id).ToArray());
+            foreach (var rt in regularTranzes)
+                RegularTranzactions.Add(rt);
         }
 
         private RelayCommand _addTranzactionCommand;
@@ -159,7 +177,14 @@ namespace BlankApp1.ViewModels
                 StaticData.SetCategory(dBContext.Categories.Single(x => x.Id == Convert.ToInt32(obj)));
                 EditCategoryWindow();
             }));
+        private DelegateCommand _addSubscription;
+        public DelegateCommand AddSubscription
+            => _addSubscription ?? (_addSubscription = new DelegateCommand(AddNewSubscription));
 
+        private void AddNewSubscription()
+        {
+            openTranzDS.ShowDialog<AddSubscriptionViewModel>(result => { });
+        }
 
         private DelegateCommand _refresh;
         public DelegateCommand Refresh =>
@@ -169,6 +194,7 @@ namespace BlankApp1.ViewModels
             var dbUser = dBContext.Users
                 .Include(x => x.Categories)
                 .Include(x => x.Tranzactions)
+                .Include(x => x.RegularTranzactions)
                 .Single(x => x.Id == _user.Id);
             _tranzactions.Clear();
             foreach(var t in dbUser.Tranzactions)
@@ -180,12 +206,17 @@ namespace BlankApp1.ViewModels
             {
                 _categories.Add(CustomMapper.GetInstance().Map<CategoryUI>(cat));
             }
+            RegularTranzactions.Clear();
+            foreach (var sub in dbUser.RegularTranzactions)
+            {
+                RegularTranzactions.Add(CustomMapper.GetInstance().Map<RegularTranzactionUI>(sub));
+            }
             UserSaver.GetUser(dbUser);
             User = CustomMapper.GetInstance().Map<UserUI>(UserSaver.GetUser());
         }
         private void EditCategoryWindow()
         {
-            openTranzDS.ShowDialog<EditCategoryViewModel>(result =>{ });
+            openTranzDS.ShowDialog<EditCategoryViewModel>(result => { });
         }
 
         private void ExecuteShowWindow()
@@ -253,21 +284,61 @@ namespace BlankApp1.ViewModels
             Categories.Remove(a);
         }
 
+        private RelayCommand _deleteSubscription;
+        public RelayCommand DeleteSubscription
+        {
+            get
+            {
+                return _deleteSubscription ??
+                     (_deleteSubscription = new RelayCommand(obj =>
+                     {
+
+                         int a = Convert.ToInt32(obj);
+                         DeleteSubs(a);
+                     }));
+            }
+        }
 
 
+        private DelegateCommand<int> _editSubscription;
+        public DelegateCommand<int> EditSubscription
+            => _editSubscription ?? (_editSubscription = new DelegateCommand<int>(EditSubs));
 
-
-
-
-        public DelegateCommand NewTabCommand { get; }
-        public ICollection<ITab> Tabs { get; }
-        private void GetThisTab()
+        
+        private void EditSubs(int obj)
         {
 
         }
 
+        private void DeleteSubs(int id)
+        {
+            dBContext.Remove(dBContext.RegularTranzactions.Single(x => x.Id == id));
+            dBContext.SaveChanges();
 
+            RegularTranzactions.Remove(RegularTranzactions.First(x => x.Id == id));
+        }
 
+        private RelayCommand _editTranzaction;
+        public RelayCommand EditTranzaction
+        {
+            get
+            {
+                return _editTranzaction ??
+                     (_editTranzaction = new RelayCommand(obj =>
+                     {
 
+                         int a = Convert.ToInt32(obj);
+                         EditTranz(a);
+                     }));
+            }
+        }
+
+        private void EditTranz(int obj)
+        {
+            StaticData.SetTranzaction(dBContext.Tranzactions.Single(x => x.Id == obj));
+            ExecuteShowWindow();
+        }
+
+       
     }
 }

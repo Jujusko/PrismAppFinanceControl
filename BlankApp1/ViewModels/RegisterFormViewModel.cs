@@ -71,6 +71,10 @@ namespace BlankApp1.ViewModels
                       {
                           dBContext.Users.Add(toDb);
                           dBContext.SaveChanges();
+                          toDb = dBContext.Users.Single(x => x.Name == toDb.Name);
+                          SetDefaultSettings(toDb);
+                          dBContext.SaveChanges();
+
                       }
 
                       var tmp = dBContext.Users
@@ -100,6 +104,7 @@ namespace BlankApp1.ViewModels
                       var result = dBContext.Users.FirstOrDefault(a => a.Name == _user.Name);
                       if (result == null)
                       {
+                          SetDefaultSettings(toDb);
                           dBContext.Users.Add(toDb);
                           dBContext.SaveChanges();
                       }
@@ -112,6 +117,19 @@ namespace BlankApp1.ViewModels
             }
         }
 
+
+        private void SetDefaultSettings(User user)
+        {
+            Category defaultCat = new();
+            defaultCat.Name = "Default";
+            defaultCat.UserId = user.Id;
+            Category regular = new();
+            regular.Name = "RegularTranzactions";
+            regular.UserId = user.Id;
+            dBContext.Categories.Add(defaultCat);
+            dBContext.Categories.Add(regular);
+            dBContext.SaveChanges();
+        }
 
 
         private void ExecuteShowWindow()

@@ -18,5 +18,6 @@ namespace BlankApp1.DataBaseLay
         public DbSet<User> Users { get; set; }
         public DbSet<Tranzaction> Tranzactions { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<RegularTranzaction> RegularTranzactions { get; set; }
     }
 }

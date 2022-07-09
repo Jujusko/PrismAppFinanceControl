@@ -28,8 +28,8 @@
         <TextBlock TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Text="Средняя сумма в день" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Column="2" Grid.Row="2" Text ="{Binding Path=PredictSum}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock TextWrapping="Wrap" Grid.Column="2" Grid.Row="1" Text="Прогнозируемая сумма" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <!--<TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="В предыдущем месяце" VerticalAlignment="Center" Visibility=""/>
-        <TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" TextWrapping="Wrap" Text="2222222" VerticalAlignment="Center" IsEnabled="False"/>-->
+        <TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" Text="В предыдущем месяце" VerticalAlignment="Center" Visibility="{Binding LastMonth}"/>
+        <TextBlock Grid.Column="3" HorizontalAlignment="Center" Grid.Row="2" TextWrapping="Wrap" Text="{Binding LastMonthTranzactions}" VerticalAlignment="Center" Visibility="{Binding LastMonth}"/>
         
         
 

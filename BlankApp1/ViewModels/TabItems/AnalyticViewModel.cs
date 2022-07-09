@@ -12,12 +12,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using BlankApp1.DataBaseLay.Entitys;
+using System.Windows;
+using System.Timers;
+using System.Windows.Threading;
 
 namespace BlankApp1.ViewModels.TabItems
 {
     public class AnalyticViewModel : BindableBase
     {
-
+        private DispatcherTimer _autoRefresh;
         private double _monthlyAvgPayment;
         public double MonthlyAvgPayment
         {
@@ -32,6 +35,20 @@ namespace BlankApp1.ViewModels.TabItems
             set => SetProperty(ref _predictSum, value);
         }
 
+
+        private double _lastMonthTranzactions;
+        public double LastMonthTranzactions
+        {
+            get => _lastMonthTranzactions;
+            set
+            {
+                LastMonth = Visibility.Hidden;
+                SetProperty(ref _lastMonthTranzactions, value);
+                if (_lastMonthTranzactions != 0)
+                    LastMonth = Visibility.Visible;
+            }
+        }
+
         private CategoryUI _selectedCategory;
         public CategoryUI SelectedCategory
         {
@@ -42,7 +59,13 @@ namespace BlankApp1.ViewModels.TabItems
                 CalcMonthlyForCategory(_selectedCategory.Name);
                 CalcPredictSum(_selectedCategory.Name);
                 ChangingCategory();
+                SetLastMonthField();
             }
+        }
+
+        private void SetLastMonthField()
+        {
+           LastMonthTranzactions = _logicPart.GetTotalSumForLastMonth(CustomMapper.GetInstance().Map<Category>(SelectedCategory));
         }
 
         private ObservableCollection<TranzactionUI> _tranzactionsByCategory;
@@ -61,19 +84,21 @@ namespace BlankApp1.ViewModels.TabItems
             set => SetProperty(ref _categories, value);
         }
 
-        private AppDBContext _db = new();
+        private AppDBContext _db;
 
         private AnalyticLogic _logicPart;
 
         public AnalyticViewModel()
         {
-            _logicPart = new(_db);
+            _db = UserSaver.GetDB();
+            AutoRefresh();
+            _logicPart = new();
             TranzactionsByCategory = new();
             Categories = new();
             var categories = _db.Categories.Include(x => x.Tranzactions).Where(x => x.UserId == UserSaver.currentUser.Id).ToList<Category>();
             foreach(var cat in categories)
                 Categories.Add(CustomMapper.GetInstance().Map<CategoryUI>(cat));
-
+            LastMonth = Visibility.Hidden;
         }
 
         private void ChangingCategory()
@@ -86,6 +111,12 @@ namespace BlankApp1.ViewModels.TabItems
             }
         }
 
+        private Visibility _lastMonth;
+        public Visibility LastMonth
+        {
+            get => _lastMonth;
+            set => SetProperty(ref _lastMonth, value);
+        }
         #region Monthly sum
         private DelegateCommand _getMonthlyCommand;
         public DelegateCommand GetMonthlyCommand
@@ -128,5 +159,38 @@ namespace BlankApp1.ViewModels.TabItems
             }
         }
         #endregion
+
+
+
+        private void AutoRefresh()
+        {
+
+            _autoRefresh = new DispatcherTimer();
+            _autoRefresh.Tick += new EventHandler(timer_Tick);
+            _autoRefresh.Interval = new TimeSpan(0, 0, 10);
+            _autoRefresh.Start();
+
+            //...
+
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            var categoriesFromDB = _db.Categories.Include(x => x.Tranzactions).Where(x => x.UserId == UserSaver.currentUser.Id).ToList<Category>();
+            foreach (var cat in categoriesFromDB)
+            {
+                if (Categories.FirstOrDefault(x => x.Name == cat.Name) == null)
+                    Categories.Add(CustomMapper.GetInstance().Map<CategoryUI>(cat));
+            }
+            List<string> categsDelete = new();
+            foreach(var cat in Categories)
+            {
+                if (categoriesFromDB.FirstOrDefault(x => x.Name == cat.Name) == null)
+                    categsDelete.Add(cat.Name);
+            }
+            foreach (var nameCat in categsDelete)
+                Categories.Remove(Categories.Single(x => x.Name == nameCat));
+        }
+
     }
 }

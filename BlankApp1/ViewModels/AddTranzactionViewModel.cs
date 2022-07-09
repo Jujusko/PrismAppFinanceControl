@@ -10,13 +10,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace BlankApp1.ViewModels
 {
     public class AddTranzactionViewModel : BindableBase
     {
 
-        private AppDBContext _db = new();
+        private AppDBContext _db;
         private User _user ;
         private ObservableCollection<CategoryUI> _categories;
         public ObservableCollection<CategoryUI> Categories
@@ -38,6 +39,19 @@ namespace BlankApp1.ViewModels
             set => SetProperty(ref _tranzToAdd, value);
         }
 
+        private Visibility _showAdd;
+        public Visibility ShowAdd
+        {
+            get => _showAdd;
+            set => SetProperty(ref _showAdd, value);
+        }
+
+        private Visibility _editingTranzVisible;
+        public Visibility EditTranzVisible
+        {
+            get => _editingTranzVisible;
+            set => SetProperty(ref _editingTranzVisible, value);
+        }
 
         private DateTime _tranzDate;
         public DateTime TranzDate
@@ -54,19 +68,47 @@ namespace BlankApp1.ViewModels
 
             _tranzToAdd.Date = TranzDate.ToShortDateString();
             Tranzaction tranzToAdd = CustomMapper.GetInstance().Map<Tranzaction>(_tranzToAdd);
-            tranzToAdd.CategoryId = SelectedCategory.Id;
+            if (SelectedCategory is not null)
+                tranzToAdd.CategoryId = SelectedCategory.Id;
+            else
+                tranzToAdd.CategoryId = Categories.Single(x => x.Name == "Default").Id;
             tranzToAdd.UserId = _user.Id;
             _db.Tranzactions.Add(tranzToAdd);
             var dbUser = _db.Users.Single(x => x.Id == tranzToAdd.UserId);
             dbUser.Balance -= tranzToAdd.Cost;
             _db.SaveChanges();
             UserSaver.currentUser.Balance -= tranzToAdd.Cost;
-            //UserSaver.GetUser(dbUser);
         }
+        private DelegateCommand _edit;
+        public DelegateCommand Edit
+            => _edit ?? (_edit = new DelegateCommand(EditTranzaction));
+
+        private void EditTranzaction()
+        {
+            _tranzToAdd.Date = TranzDate.ToShortDateString();
+            var changedTranz = _db.Tranzactions.Single(x => x.Id == TranzToAdd.Id);
+            changedTranz.Name = TranzToAdd.Name;
+            changedTranz.Date = TranzToAdd.Date;
+            changedTranz.Cost = TranzToAdd.Cost;
+        }
+
         public AddTranzactionViewModel()
         {
+            _db = UserSaver.GetDB();
             TranzDate = DateTime.Today;
-            _tranzToAdd = new(100,"Что купили?");
+            var savedTranz = StaticData.GetTranzaction();
+            if (savedTranz is null)
+            {
+                _tranzToAdd = new();
+                ShowAdd = Visibility.Visible;
+                EditTranzVisible = Visibility.Hidden;
+            }
+            else
+            {
+                _tranzToAdd = savedTranz;
+                ShowAdd = Visibility.Hidden;
+                EditTranzVisible = Visibility.Visible;
+            }
             _user = UserSaver.GetUser();
             Categories = new();
             foreach(var cat in _user.Categories)
