@@ -30,6 +30,9 @@
                         <Button Content="Изменить" Grid.Column="1" Grid.Row="1"
                                 Command="{Binding DataContext.EditTranzaction, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" 
                                 CommandParameter="{Binding Path=Id}"/>
+                        <Button Content="Удалить" Grid.Column="1" Grid.Row="1"
+                                Command="{Binding DataContext.DeleteTranz, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" 
+                                CommandParameter="{Binding Path=Id}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

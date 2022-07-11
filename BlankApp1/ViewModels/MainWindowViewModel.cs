@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace BlankApp1.ViewModels
 {
@@ -120,6 +121,7 @@ namespace BlankApp1.ViewModels
                 (dBContext.RegularTranzactions.Where(x => x.UserId == userId.Id).ToArray());
             foreach (var rt in regularTranzes)
                 RegularTranzactions.Add(rt);
+            TryToAddRegularTranzaction();
         }
 
         private RelayCommand _addTranzactionCommand;
@@ -333,12 +335,64 @@ namespace BlankApp1.ViewModels
             }
         }
 
+        
+
         private void EditTranz(int obj)
         {
             StaticData.SetTranzaction(dBContext.Tranzactions.Single(x => x.Id == obj));
             ExecuteShowWindow();
         }
 
-       
+        private RelayCommand _deleteTranz;
+        public RelayCommand DeleteTranz
+        {
+            get
+            {
+                return _deleteTranz ??
+                     (_deleteTranz = new RelayCommand(obj =>
+                     {
+
+                         int a = Convert.ToInt32(obj);
+                         DeleteTranzaction(a);
+                     }));
+            }
+        }
+
+        private void DeleteTranzaction(int a)
+        {
+            dBContext.Tranzactions.Remove(dBContext.Tranzactions.Single(x => x.Id == a));
+            Tranzactions.Remove(Tranzactions.Single(x => x.Id == a));
+            dBContext.SaveChanges();
+        }
+
+        private void TryToAddRegularTranzaction()
+        {
+            var subscriptionsCategoryId = dBContext.Categories.Single(x => x.UserId == UserSaver.currentUser.Id && x.Name == "RegularTranzactions");
+            var allSubscriptions = dBContext.RegularTranzactions.Where(x => x.UserId == UserSaver.currentUser.Id).ToArray();
+            var userRegularTranzactions = CustomMapper.GetInstance().Map<List<TranzactionWithDateTimeStruct>>(dBContext.Tranzactions.Where(x => x.UserId == UserSaver.currentUser.Id
+                                                    && x.CategoryId == subscriptionsCategoryId.Id).ToArray());
+            //var test = CustomMapper.GetInstance().Map<TranzactionWithDateTimeStruct>((UserSaver.currentUser.Tranzactions.ToArray())[0]);
+            foreach (var sub in allSubscriptions)
+            {
+                //var a = userRegularTranzactions.FirstOrDefault(x => x.Name == sub.Name);
+                //if (a.Date.Day <= DateTime.Now.Day)
+                //{
+                //    dBContext.Categories.Single(x => x.Id == 2);
+                //}
+                if (userRegularTranzactions.FirstOrDefault(x => x.Name == sub.Name 
+                && x.Date.Day <= DateTime.Now.Day 
+                && x.Date.Month == DateTime.Now.Month) == null)
+                {
+                    Tranzaction monthlyPay = new();
+                    monthlyPay.Name = sub.Name;
+                    monthlyPay.Date = DateTime.Now.AddDays(sub.Day - DateTime.Now.Day).ToString();
+                    monthlyPay.CategoryId = subscriptionsCategoryId.Id;
+                    monthlyPay.UserId = subscriptionsCategoryId.UserId;
+                    monthlyPay.Cost = sub.Cost;
+                    dBContext.Tranzactions.Add(monthlyPay);
+                    dBContext.SaveChanges();
+                }
+            }
+        }
     }
 }

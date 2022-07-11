@@ -161,7 +161,6 @@ namespace BlankApp1.ViewModels.TabItems
         #endregion
 
 
-
         private void AutoRefresh()
         {
 

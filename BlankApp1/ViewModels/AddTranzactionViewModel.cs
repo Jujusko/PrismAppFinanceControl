@@ -85,11 +85,14 @@ namespace BlankApp1.ViewModels
 
         private void EditTranzaction()
         {
+            var dbUser = _db.Users.Single(x => x.Id == TranzToAdd.UserId);
+            dbUser.Balance -= TranzToAdd.Cost;
             _tranzToAdd.Date = TranzDate.ToShortDateString();
             var changedTranz = _db.Tranzactions.Single(x => x.Id == TranzToAdd.Id);
             changedTranz.Name = TranzToAdd.Name;
             changedTranz.Date = TranzToAdd.Date;
             changedTranz.Cost = TranzToAdd.Cost;
+            _db.SaveChanges();
         }
 
         public AddTranzactionViewModel()
@@ -105,9 +108,15 @@ namespace BlankApp1.ViewModels
             }
             else
             {
+                var dbUser = _db.Users.Single(x => x.Id == savedTranz.UserId);
+                dbUser.Balance += savedTranz.Cost;
+
                 _tranzToAdd = savedTranz;
+
                 ShowAdd = Visibility.Hidden;
                 EditTranzVisible = Visibility.Visible;
+
+                _db.SaveChanges();
             }
             _user = UserSaver.GetUser();
             Categories = new();

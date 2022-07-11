@@ -25,9 +25,11 @@ namespace BlankApp1.Helpers
             _instance = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<UserUI, User>().ReverseMap();
-                cfg.CreateMap<TranzactionUI, Tranzaction>().ReverseMap().ForMember(dest => dest.Date, act => act.MapFrom(src => Convert.ToDateTime( src.Date)));
+                cfg.CreateMap<TranzactionUI, Tranzaction>().ReverseMap();
                 cfg.CreateMap<CategoryUI, Category>().ReverseMap();
                 cfg.CreateMap<RegularTranzactionUI, RegularTranzaction>().ReverseMap();
+                cfg.CreateMap<Tranzaction, TranzactionWithDateTimeStruct>().ReverseMap()
+                .ForMember(dest => dest.Date, act => act.MapFrom(src => Convert.ToDateTime(src.Date)));
             }));
         }
     }
